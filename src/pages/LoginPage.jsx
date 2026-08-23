@@ -6,10 +6,11 @@ import { ErrorNotice } from '../components/UI.jsx';
 import { useAuth } from '../lib/auth.jsx';
 
 export default function LoginPage() {
+  const demoMode = import.meta.env.DEV || import.meta.env.VITE_MAAPSURE_DEMO_MODE === 'true';
   const { user, login, loading } = useAuth();
   const navigate = useNavigate();
-  const [email, setEmail] = useState('admin@maapsure.in');
-  const [password, setPassword] = useState('Demo@123');
+  const [email, setEmail] = useState(demoMode ? 'admin@maapsure.in' : '');
+  const [password, setPassword] = useState(demoMode ? 'Demo@123' : '');
   const [error, setError] = useState('');
 
   useEffect(() => { document.title = 'Sign in | MaapSure'; }, []);
@@ -51,12 +52,12 @@ export default function LoginPage() {
           <label>Email address<input value={email} onChange={(event) => setEmail(event.target.value)} type="email" autoComplete="email" required /></label>
           <label>Password<input value={password} onChange={(event) => setPassword(event.target.value)} type="password" autoComplete="current-password" required /></label>
           <button className="button primary large" disabled={loading}>{loading ? 'Signing in...' : 'Sign in'}<ArrowRight size={18} /></button>
-          <div className="demo-role-grid">
+          {demoMode && <div className="demo-role-grid">
             <button type="button" onClick={() => { setEmail('inspector@maapsure.in'); setPassword('Inspect@123'); }}><strong>Tester</strong><span>Record and submit</span></button>
             <button type="button" onClick={() => { setEmail('reviewer@maapsure.in'); setPassword('Review@123'); }}><strong>Reviewer</strong><span>Approve independently</span></button>
             <button type="button" onClick={() => { setEmail('admin@maapsure.in'); setPassword('Demo@123'); }}><strong>Administrator</strong><span>Rules and users</span></button>
-          </div>
-          <a className="verify-link" href="/verify/MS26A418"><QrCode size={16} /> Open public report verification</a>
+          </div>}
+          <a className="verify-link" href="/verify"><QrCode size={16} /> Open public report verification</a>
         </form>
       </section>
     </div>

@@ -6,6 +6,7 @@ import DashboardPage from './pages/DashboardPage.jsx';
 import InstrumentsPage from './pages/InstrumentsPage.jsx';
 import TestsPage from './pages/TestsPage.jsx';
 import NewTestPage from './pages/NewTestPage.jsx';
+import TypeEvaluationEditorPage from './pages/TypeEvaluationEditorPage.jsx';
 import TestDetailPage from './pages/TestDetailPage.jsx';
 import VerifyPage from './pages/VerifyPage.jsx';
 import GovernancePage from './pages/GovernancePage.jsx';
@@ -20,6 +21,7 @@ export default function App() {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/verify" element={<VerifyPage />} />
       <Route path="/verify/:code" element={<VerifyPage />} />
       <Route element={<ProtectedLayout />}>
         <Route index element={<Navigate to="/dashboard" replace />} />
@@ -28,6 +30,7 @@ export default function App() {
         <Route path="/tests" element={<TestsPage />} />
         <Route path="/review" element={<TestsPage reviewQueue />} />
         <Route path="/tests/new" element={<NewTestPage />} />
+        <Route path="/tests/:id/edit" element={<TypeEvaluationEditorPage />} />
         <Route path="/tests/:id" element={<TestDetailPage />} />
         <Route path="/governance" element={<GovernancePage />} />
         <Route path="/audit" element={<AuditPage />} />

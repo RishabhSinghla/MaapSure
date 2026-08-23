@@ -3,6 +3,7 @@ import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { BarChart3, ClipboardCheck, FileSearch, Gauge, History, LandPlot, LogOut, Menu, Plus, Scale, ShieldCheck, X } from 'lucide-react';
 import Logo from './Logo.jsx';
 import { useAuth } from '../lib/auth.jsx';
+import { RULE_PROFILE } from '../../shared/r76Catalog.js';
 
 const titles = {
   '/dashboard': ['Good morning', 'Your laboratory is ready for testing.'],
@@ -11,14 +12,14 @@ const titles = {
   '/tests/new': ['New OIML test', 'Record observations and calculate the result.'],
   '/review': ['Independent review queue', 'Approve or return submitted tests using four-eyes control.'],
   '/governance': ['Standards and access', 'Versioned rules, governed changes and named user roles.'],
-  '/audit': ['Tamper-evident audit', 'Verify every permanent action from the first record onward.'],
+  '/audit': ['Chained audit consistency', 'Check every recorded permanent action from the first event onward.'],
 };
 
 export default function Layout() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { user, logout } = useAuth();
   const location = useLocation();
-  const detailTitle = location.pathname.startsWith('/tests/') && location.pathname !== '/tests/new' ? ['Test report', 'Full evidence, calculations and digital verification.'] : null;
+  const detailTitle = location.pathname.startsWith('/tests/') && location.pathname !== '/tests/new' ? ['Test report', 'Evidence, calculations and issued-record consistency.'] : null;
   const [title, subtitle] = detailTitle || titles[location.pathname] || ['MaapSure', 'Trusted measurement, proven digitally.'];
   const canTest = ['TESTER', 'ADMIN'].includes(user?.role);
   const navigation = [
@@ -47,11 +48,11 @@ export default function Layout() {
             </NavLink>
           ))}
           <span className="nav-label nav-label-spaced">Public tools</span>
-          <a className="nav-link" href="/verify/MS26A418"><ShieldCheck size={19} /> Verify a report</a>
+          <a className="nav-link" href="/verify"><ShieldCheck size={19} /> Verify a report</a>
         </nav>
         <div className="standard-card">
           <Scale size={19} />
-          <div><strong>R 76 rules v1.0.0</strong><span>Published and locked</span></div>
+          <div><strong>R 76 rules v{RULE_PROFILE.version}</strong><span>Published and locked</span></div>
           <i />
         </div>
         <div className="sidebar-user">

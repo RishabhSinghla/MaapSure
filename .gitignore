@@ -1,8 +1,10 @@
 node_modules/
 dist/
 .env
+.env.production
 data/database.json
 data/database.*.tmp
+data/backups/
 data/uploads/
 .DS_Store
 npm-debug.log*

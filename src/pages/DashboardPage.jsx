@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { ArrowRight, CheckCircle2, Clock3, Gauge, Plus, Sparkles, TrendingUp } from 'lucide-react';
+import { AlertTriangle, ArrowRight, CheckCircle2, Clock3, Gauge, Plus, Sparkles, TrendingUp } from 'lucide-react';
 import { api } from '../lib/api.js';
 import { Loading, StatusBadge } from '../components/UI.jsx';
+import { REPORT_SECTIONS, REQUIREMENT_FAMILIES } from '../../shared/r76Catalog.js';
 
 export default function DashboardPage() {
   const [data, setData] = useState(null);
@@ -22,12 +23,13 @@ export default function DashboardPage() {
 
   return (
     <div className="dashboard-grid">
+      {data.stats.integrityFailures > 0 && <div className="warning-banner dashboard-integrity-warning"><AlertTriangle /><span><strong>{data.stats.integrityFailures} issued record consistency failure(s).</strong> Exports and public reliance are blocked until an administrator restores the controlled record.</span></div>}
       <section className="hero-card">
         <div>
-          <span className="eyebrow light"><Sparkles size={15} /> Guided OIML testing</span>
-          <h2>Turn readings into a verified report.</h2>
-          <p>MaapSure applies the correct error limit at every load point and explains exactly why an instrument passed or failed.</p>
-          <button className="button light" onClick={() => navigate('/tests/new')}><Plus size={18} /> Start a test</button>
+          <span className="eyebrow light"><Sparkles size={15} /> Guided model approval / type evaluation</span>
+          <h2>Turn a complete type dossier into a governed report.</h2>
+          <p>MaapSure plans applicability, calculates corrected errors, blocks missing work and preserves the independent approval record.</p>
+          <button className="button light" onClick={() => navigate('/tests/new')}><Plus size={18} /> Start an evaluation</button>
         </div>
         <div className="hero-visual">
           <div className="scale-display"><span>15.008</span><small>kg</small></div>
@@ -49,8 +51,9 @@ export default function DashboardPage() {
         <div className="panel-heading"><div><span className="eyebrow">Live rule engine</span><h3>What MaapSure checks</h3></div></div>
         <div className="rules-list">
           {[
-            ['3.5.1', 'Permitted error at each load'], ['5.2', 'Temperature effect at zero'], ['5.7', 'Creep over time'], ['6.2', 'Supply voltage variation'],
-          ].map(([clause, label]) => <div key={clause}><CheckCircle2 /><span><strong>{label}</strong><small>OIML clause {clause}</small></span></div>)}
+            ['3.5.1 / Table 6', 'Corrected error at every load'], ['3.9.2.3', 'Temperature effect at zero'], ['3.9.4.1', 'Creep over time'], ['3.9.3', 'Supply-voltage influence'],
+            ['R 76-2 sections 1-17', `${REPORT_SECTIONS.length} separately recorded digital branches`], ['R 76-1 requirements', `${REQUIREMENT_FAMILIES.length} governed requirement families`],
+          ].map(([clause, label]) => <div key={clause}><CheckCircle2 /><span><strong>{label}</strong><small>OIML {clause}</small></span></div>)}
         </div>
       </section>
 
