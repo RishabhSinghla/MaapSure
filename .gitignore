@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.env
+data/database.json
+data/database.*.tmp
+data/uploads/
+.DS_Store
+npm-debug.log*
