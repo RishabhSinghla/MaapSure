@@ -8,6 +8,8 @@ import TestsPage from './pages/TestsPage.jsx';
 import NewTestPage from './pages/NewTestPage.jsx';
 import TestDetailPage from './pages/TestDetailPage.jsx';
 import VerifyPage from './pages/VerifyPage.jsx';
+import GovernancePage from './pages/GovernancePage.jsx';
+import AuditPage from './pages/AuditPage.jsx';
 
 function ProtectedLayout() {
   const { user } = useAuth();
@@ -24,8 +26,11 @@ export default function App() {
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/instruments" element={<InstrumentsPage />} />
         <Route path="/tests" element={<TestsPage />} />
+        <Route path="/review" element={<TestsPage reviewQueue />} />
         <Route path="/tests/new" element={<NewTestPage />} />
         <Route path="/tests/:id" element={<TestDetailPage />} />
+        <Route path="/governance" element={<GovernancePage />} />
+        <Route path="/audit" element={<AuditPage />} />
       </Route>
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>

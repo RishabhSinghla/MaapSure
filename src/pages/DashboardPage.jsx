@@ -14,10 +14,10 @@ export default function DashboardPage() {
   if (!data) return <Loading label={error || 'Preparing your laboratory overview...'} />;
 
   const stats = [
-    { label: 'Tests completed', value: data.stats.totalTests, note: '+12 this month', icon: CheckCircle2, tone: 'green' },
-    { label: 'First-time pass rate', value: `${data.stats.passRate}%`, note: 'Core checks', icon: TrendingUp, tone: 'blue' },
-    { label: 'Active instruments', value: data.stats.activeInstruments, note: '1 due for review', icon: Gauge, tone: 'amber' },
-    { label: 'Laboratory time saved', value: `${Math.round(data.stats.timeSavedHours)}h`, note: 'Estimated', icon: Clock3, tone: 'violet' },
+    { label: 'Approved reports', value: data.stats.totalTests, note: 'Locked records', icon: CheckCircle2, tone: 'green' },
+    { label: 'Pass rate', value: `${data.stats.passRate}%`, note: 'Approved reports', icon: TrendingUp, tone: 'blue' },
+    { label: 'Active instruments', value: data.stats.activeInstruments, note: 'Registered', icon: Gauge, tone: 'amber' },
+    { label: 'Waiting for review', value: data.stats.pendingReview, note: 'Independent approval', icon: Clock3, tone: 'violet' },
   ];
 
   return (
@@ -49,7 +49,7 @@ export default function DashboardPage() {
         <div className="panel-heading"><div><span className="eyebrow">Live rule engine</span><h3>What MaapSure checks</h3></div></div>
         <div className="rules-list">
           {[
-            ['3.5.1', 'Permitted error at each load'], ['3.6.1', 'Repeatability of readings'], ['3.6.2', 'Corner-load response'], ['3.9.4.2', 'Return to zero'],
+            ['3.5.1', 'Permitted error at each load'], ['5.2', 'Temperature effect at zero'], ['5.7', 'Creep over time'], ['6.2', 'Supply voltage variation'],
           ].map(([clause, label]) => <div key={clause}><CheckCircle2 /><span><strong>{label}</strong><small>OIML clause {clause}</small></span></div>)}
         </div>
       </section>

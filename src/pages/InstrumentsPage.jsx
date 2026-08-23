@@ -2,10 +2,13 @@ import { useEffect, useMemo, useState } from 'react';
 import { CheckCircle2, Gauge, Plus, Search, X } from 'lucide-react';
 import { api } from '../lib/api.js';
 import { EmptyState, ErrorNotice, Loading, StatusBadge } from '../components/UI.jsx';
+import { useAuth } from '../lib/auth.jsx';
 
 const emptyForm = { manufacturer: '', model: '', serialNumber: '', accuracyClass: 'III', maxCapacity: '', minCapacity: '', verificationInterval: '', actualScaleInterval: '', unit: 'kg', location: '' };
 
 export default function InstrumentsPage() {
+  const { user } = useAuth();
+  const canRegister = ['TESTER', 'ADMIN'].includes(user.role);
   const [instruments, setInstruments] = useState(null);
   const [query, setQuery] = useState('');
   const [modal, setModal] = useState(false);
@@ -30,7 +33,7 @@ export default function InstrumentsPage() {
 
   return (
     <>
-      <div className="page-actions"><div className="search-box"><Search size={18} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search model or serial number" /></div><button className="button primary" onClick={() => { setError(''); setModal(true); }}><Plus size={18} /> Register instrument</button></div>
+      <div className="page-actions"><div className="search-box"><Search size={18} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search model or serial number" /></div>{canRegister && <button className="button primary" onClick={() => { setError(''); setModal(true); }}><Plus size={18} /> Register instrument</button>}</div>
       <section className="panel instrument-panel">
         <div className="panel-heading"><div><span className="eyebrow">{filtered.length} registered</span><h3>Weighing instruments</h3></div></div>
         {filtered.length ? <div className="instrument-grid">{filtered.map((instrument) => <article className="instrument-card" key={instrument.id}>

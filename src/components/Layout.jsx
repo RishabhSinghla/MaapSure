@@ -1,20 +1,17 @@
 import { useState } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
-import { BarChart3, ClipboardCheck, Gauge, LogOut, Menu, Plus, Scale, ShieldCheck, X } from 'lucide-react';
+import { BarChart3, ClipboardCheck, FileSearch, Gauge, History, LandPlot, LogOut, Menu, Plus, Scale, ShieldCheck, X } from 'lucide-react';
 import Logo from './Logo.jsx';
 import { useAuth } from '../lib/auth.jsx';
-
-const navigation = [
-  { to: '/dashboard', label: 'Overview', icon: BarChart3 },
-  { to: '/tests', label: 'Test reports', icon: ClipboardCheck },
-  { to: '/instruments', label: 'Instruments', icon: Gauge },
-];
 
 const titles = {
   '/dashboard': ['Good morning', 'Your laboratory is ready for testing.'],
   '/tests': ['Test reports', 'Review, download and verify completed tests.'],
   '/instruments': ['Instrument registry', 'Manage every weighing instrument in one place.'],
   '/tests/new': ['New OIML test', 'Record observations and calculate the result.'],
+  '/review': ['Independent review queue', 'Approve or return submitted tests using four-eyes control.'],
+  '/governance': ['Standards and access', 'Versioned rules, governed changes and named user roles.'],
+  '/audit': ['Tamper-evident audit', 'Verify every permanent action from the first record onward.'],
 };
 
 export default function Layout() {
@@ -23,6 +20,15 @@ export default function Layout() {
   const location = useLocation();
   const detailTitle = location.pathname.startsWith('/tests/') && location.pathname !== '/tests/new' ? ['Test report', 'Full evidence, calculations and digital verification.'] : null;
   const [title, subtitle] = detailTitle || titles[location.pathname] || ['MaapSure', 'Trusted measurement, proven digitally.'];
+  const canTest = ['TESTER', 'ADMIN'].includes(user?.role);
+  const navigation = [
+    { to: '/dashboard', label: 'Overview', icon: BarChart3, show: true },
+    { to: '/tests', label: 'Controlled records', icon: ClipboardCheck, show: true },
+    { to: '/instruments', label: 'Instruments', icon: Gauge, show: true },
+    { to: '/review', label: 'Review queue', icon: FileSearch, show: ['REVIEWER', 'ADMIN'].includes(user?.role) },
+    { to: '/governance', label: 'Standards & access', icon: LandPlot, show: ['REVIEWER', 'ADMIN'].includes(user?.role) },
+    { to: '/audit', label: 'Audit trail', icon: History, show: ['REVIEWER', 'AUDITOR', 'ADMIN'].includes(user?.role) },
+  ].filter((item) => item.show);
 
   return (
     <div className="app-shell">
@@ -32,7 +38,7 @@ export default function Layout() {
           <Logo light />
           <button className="icon-button mobile-only" onClick={() => setMobileOpen(false)}><X size={20} /></button>
         </div>
-        <a href="/tests/new" className="new-test-button"><Plus size={18} /> Start a new test</a>
+        {canTest && <a href="/tests/new" className="new-test-button"><Plus size={18} /> Start a new test</a>}
         <nav className="side-nav">
           <span className="nav-label">Workspace</span>
           {navigation.map((item) => (
@@ -45,7 +51,7 @@ export default function Layout() {
         </nav>
         <div className="standard-card">
           <Scale size={19} />
-          <div><strong>OIML R 76-1</strong><span>Rules engine active</span></div>
+          <div><strong>R 76 rules v1.0.0</strong><span>Published and locked</span></div>
           <i />
         </div>
         <div className="sidebar-user">

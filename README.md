@@ -1,75 +1,81 @@
 # MaapSure
 
-MaapSure is a working SIH 2026 prototype for problem statement **SIH26035**. It turns observations from a non-automatic weighing instrument test into an automatically evaluated OIML R 76 report with a QR-verifiable public record.
+MaapSure is a controlled digital laboratory system for SIH 2026 problem statement **SIH26035**. It guides testing of non-automatic weighing instruments, applies visible OIML R 76 calculations, enforces independent review, produces locked reports and lets the public detect revoked or altered records.
 
 ## Start it
 
-You need Node.js 20 or newer.
+Node.js 20 or newer is required.
 
 ```bash
 npm install
-npm run build
+npm run check
 npm start
 ```
 
 Open [http://localhost:4173](http://localhost:4173).
 
-Demo login:
+## Demo roles
 
-- Email: `admin@maapsure.in`
-- Password: `Demo@123`
+| Role | Email | Password | What the role proves |
+| --- | --- | --- | --- |
+| Tester | `inspector@maapsure.in` | `Inspect@123` | Records observations, attaches evidence and submits |
+| Reviewer | `reviewer@maapsure.in` | `Review@123` | Independently approves, returns or revokes |
+| Administrator | `admin@maapsure.in` | `Demo@123` | Views users, governed rules and controlled exports |
+| Auditor | `auditor@maapsure.in` | `Audit@123` | Read-only access to the tamper-evident audit trail |
 
-Inspector login:
+These are demonstration accounts only. Replace them with the department identity provider before real use.
 
-- Email: `inspector@maapsure.in`
-- Password: `Inspect@123`
+## What is built
 
-For live development, run `npm run dev`. The web app opens at [http://localhost:5173](http://localhost:5173).
+- Nine deterministic calculation sections:
+  - Weighing performance and OIML Table 6 error limits
+  - Repeatability, including individual error and spread checks
+  - Eccentric loading
+  - Return to zero
+  - Temperature effect at zero
+  - Digital discrimination
+  - Creep
+  - Warm-up time
+  - Voltage variation
+- Ten structured conditional sections matching the OIML R 76-2 report structure. Every section needs either a tested result with an evidence note, or a written reason for not being applicable.
+- A versioned, immutable published rules profile. Every report keeps the exact rules version used.
+- Draft → Submitted → independently Approved / Returned workflow.
+- Separation of duties: a tester cannot approve their own work.
+- Approved records are locked. Corrections create a traceable new revision.
+- Revocation with a permanent reason; the public page immediately shows the revoked state.
+- SHA-256 report fingerprint covering readings, calculations, evidence and approval.
+- SHA-256 chained audit history; changing an old event breaks the chain check.
+- Evidence upload with file-size, allowed-type and file-signature checks.
+- PDF and editable Microsoft Word-compatible reports.
+- QR-backed public verification without login.
+- Rules governance, pending expert change requests, named roles and a redacted backup export.
+- Safer sign-in with salted password hashes, login throttling, short-lived signed sessions and browser security headers.
+- Responsive mobile and desktop interface.
 
-## What works
-
-- Instrument registration for OIML Classes I, II, III and IIII
-- Automatic maximum permitted error selection using OIML R 76-1:2006 Table 6
-- Weighing performance, repeatability, eccentric loading and zero-return checks
-- Explainable diagnostic findings for calibration bias, instability, corner imbalance and zero drift
-- Role-based demo sign-in
-- Saved instrument and test repository
-- Camera-friendly evidence attachment
-- Browser voice dictation for inspector notes
-- Professional two-page PDF report
-- Unique QR code and public certificate verification page
-- Responsive mobile and desktop interface
-- Seeded pass and fail reports for an immediate demonstration
-- Automated rule-engine tests
-
-## Product structure
-
-- `src/` contains the React application.
-- `server/` contains the Express API, report generator and local data store.
-- `shared/oimlEngine.js` owns every standards-based calculation.
-- `tests/` verifies the important calculation boundaries and pass/fail behavior.
-- Runtime records are written to `data/database.json`. The file is created automatically on first start.
-
-## Check the build
-
-```bash
-npm run check
-```
-
-## Important prototype boundary
-
-MaapSure currently provides a complete digital workflow for four core metrological checks. OIML R 76 includes additional type-evaluation tests covering influence factors, disturbances, durability and device-specific functions. Those should be added with an authorized Legal Metrology expert before real statutory use.
-
-The application is decision support. Final model approval, verification and stamping remain with the legally authorized authority.
-
-## Before a public deployment
-
-Set strong values in `.env`:
+## Prove it works
 
 ```bash
-JWT_SECRET=a-long-random-secret
-PUBLIC_BASE_URL=https://your-domain.example
-PORT=4173
+npm test
+npm run build
+npm run test:integration
 ```
 
-Replace the local JSON store and demo passwords with a managed database and organization identity provider before holding real laboratory or personal data.
+The integration check starts an isolated temporary laboratory and proves:
+
+```text
+Draft -> evidence -> Submitted -> independent Approved
+-> public fingerprint verified -> PDF and editable report downloaded
+-> audit chain valid -> forbidden role actions rejected
+```
+
+## Standards sources used
+
+- [OIML R 76-1:2006](https://www.oiml.org/en/files/pdf_r/r076-1-e06.pdf)
+- [OIML R 76-2:2007 test report format](https://www.oiml.org/en/files/pdf_r/r076-2-e07.pdf/@@download/file/R076-2-e07.pdf)
+- [Department of Consumer Affairs Legal Metrology Act and Rules](https://consumeraffairs.gov.in/index.php/pages/legal-metrology-act)
+
+## Production configuration
+
+Copy `.env.example` and set a long random `JWT_SECRET`, the public HTTPS address and a protected data directory. Runtime data defaults to `data/`.
+
+The full readiness boundary and departmental sign-off list are in [GOVERNMENT_READINESS.md](GOVERNMENT_READINESS.md).

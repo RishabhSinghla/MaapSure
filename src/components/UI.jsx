@@ -6,7 +6,7 @@ export function Loading({ label = 'Loading MaapSure...' }) {
 
 export function StatusBadge({ status }) {
   const normalized = String(status || '').toLowerCase();
-  const type = normalized === 'pass' || normalized === 'finalized' || normalized === 'active' ? 'success' : normalized === 'fail' ? 'danger' : 'warning';
+  const type = ['pass', 'approved', 'active'].includes(normalized) ? 'success' : ['fail', 'revoked', 'returned'].includes(normalized) ? 'danger' : 'warning';
   return <span className={`status-badge ${type}`}><i />{status}</span>;
 }
 
